@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Detective – GitHub User Search</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="logo-area">
+                <svg class="gh-logo" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                </svg>
+                <div class="title-group">
+                    <h1>Dev Detective</h1>
+                    <p>Search any GitHub Developer</p>
+                </div>
+            </div>
+            
+            <div class="mode-toggle">
+                <button id="tab-search" class="tab-btn active">Search</button>
+                <button id="tab-battle" class="tab-btn">Battle Mode</button>
+            </div>
+        </header>
+
+        <!-- Search View (Normal Mode) -->
+        <div id="search-view">
+            <!-- Search Bar -->
+            <div class="search-container">
+                <div class="search-input-wrapper">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="search-input" placeholder="Search GitHub username..." autocomplete="off" aria-label="Search GitHub username">
+                </div>
+                <button id="search-btn" class="btn-primary" aria-label="Search">Search</button>
+            </div>
+
+            <main id="main-content">
+                <!-- Loading State -->
+                <div id="loading-state" class="state-container hidden">
+                    <div class="spinner"></div>
+                    <p>Searching for developer...</p>
+                </div>
+
+                <!-- Error State -->
+                <div id="error-state" class="state-container hidden">
+                    <div class="error-card card">
+                        <div class="warning-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <line x1="12" y1="8" x2="12" y2="12"></line>
+                                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                            </svg>
+                        </div>
+                        <h2>User Not Found</h2>
+                        <p>We couldn't find anyone matching that username. Please check the spelling and try again.</p>
+                        <button id="retry-btn" class="btn-secondary">Try Again</button>
+                    </div>
+                </div>
+
+                <!-- Profile Content -->
+                <div id="results-container" class="hidden">
+                    <div id="profile-card" class="card profile-card">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- Repositories Section -->
+                    <div id="repos-section" class="repos-section">
+                        <div class="repos-header">
+                            <h2>Latest Repositories</h2>
+                        </div>
+                        <div id="repos-list" class="repos-grid">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- Battle View -->
+        <div id="battle-view" class="hidden">
+            <div class="battle-search-container">
+                <div class="battle-header-text">
+                    <h2>Who is the ultimate developer?</h2>
+                    <p>Enter two GitHub usernames to compare their stats and find out!</p>
+                </div>
+                <div class="battle-arena">
+                    <div class="search-container battle-input-box p1-input">
+                        <div class="search-input-wrapper">
+                            <input type="text" id="player1-input" placeholder="Player 1 username..." autocomplete="off">
+                        </div>
+                    </div>
+                    
+                    <div class="vs-badge-wrapper">
+                        <div class="vs-badge">
+                            <span>VS</span>
+                        </div>
+                    </div>
+
+                    <div class="search-container battle-input-box p2-input">
+                        <div class="search-input-wrapper">
+                            <input type="text" id="player2-input" placeholder="Player 2 username..." autocomplete="off">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="battle-action-row">
+                    <button id="battle-btn" class="btn-primary btn-battle">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; margin-right: 8px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                        Commence Battle
+                    </button>
+                </div>
+            </div>
+
+            <main id="battle-content">
+                <!-- Battle Loading State -->
+                <div id="battle-loading" class="state-container hidden">
+                    <div class="spinner"></div>
+                    <p>Preparing the battle...</p>
+                </div>
+
+                <!-- Battle Error State -->
+                <div id="battle-error" class="state-container hidden">
+                    <div class="error-card card">
+                        <div class="warning-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                        </div>
+                        <h2>Battle Error</h2>
+                        <p id="battle-error-msg">One or both users not found. Please check spelling.</p>
+                    </div>
+                </div>
+
+                <!-- Battle Results Content -->
+                <div id="battle-results" class="hidden">
+                    <div class="battle-comparison-header">
+                        <h3 id="battle-winner-text"></h3>
+                    </div>
+                    
+                    <!-- Visual Comparison Bar -->
+                    <div class="comparison-bar-container">
+                        <div class="comparison-labels">
+                            <span id="p1-comp-name" class="comp-label">Player 1</span>
+                            <span class="comp-title">Followers Comparison</span>
+                            <span id="p2-comp-name" class="comp-label">Player 2</span>
+                        </div>
+                        <div class="comparison-track">
+                            <div id="p1-bar" class="comp-bar p1-fill"></div>
+                            <div id="p2-bar" class="comp-bar p2-fill"></div>
+                        </div>
+                    </div>
+
+                    <div class="battle-cards-container">
+                        <div id="player1-card" class="card battle-card slide-in-left">
+                            <!-- JS will inject badge and profile -->
+                        </div>
+                        <div id="player2-card" class="card battle-card slide-in-right">
+                            <!-- JS will inject badge and profile -->
+                        </div>
+                    </div>
+                    
+                    <div class="battle-reset-row">
+                        <button id="reset-battle-btn" class="btn-secondary btn-large">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; margin-right: 8px;"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><polyline points="3 3 3 8 8 8"></polyline></svg>
+                            Battle Again
+                        </button>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
